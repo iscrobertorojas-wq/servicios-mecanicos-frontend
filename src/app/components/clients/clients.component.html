@@ -1,0 +1,143 @@
+<div class="space-y-8">
+  <div class="flex items-center justify-between">
+    <div>
+      <h2 class="text-2xl font-bold text-slate-900">Clientes</h2>
+      <p class="text-slate-500">Administra la base de datos de tus clientes.</p>
+    </div>
+    <button (click)="openModal()" class="btn-primary flex items-center gap-2">
+      <lucide-angular [img]="icons.Plus" class="w-4 h-4"></lucide-angular>
+      Nuevo Cliente
+    </button>
+  </div>
+
+  <!-- Search & Filter Area -->
+  <div class="card-premium p-4">
+    <div class="relative max-w-md">
+      <span class="absolute inset-y-0 left-3 flex items-center text-slate-400">
+        <lucide-angular [img]="icons.Search" class="w-4 h-4"></lucide-angular>
+      </span>
+      <input 
+        type="text" 
+        placeholder="Buscar por nombre o RFC..." 
+        (input)="onSearchChange($event)"
+        class="input-modern !pl-12"
+      >
+    </div>
+  </div>
+
+  <!-- Clients Table -->
+  <div class="card-premium overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse min-w-[600px]">
+        <thead class="bg-slate-50 border-b border-slate-100">
+          <tr>
+            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Nombre</th>
+            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Contacto</th>
+            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">RFC</th>
+            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase text-right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <tr *ngFor="let client of clients" class="hover:bg-slate-50/50 transition-colors">
+            <td class="px-6 py-4">
+              <div class="font-bold text-slate-900">{{ client.name }}</div>
+              <div class="text-xs text-slate-400 mt-0.5 flex items-center gap-1">
+                <lucide-angular [img]="icons.MapPin" class="w-3 h-3"></lucide-angular>
+                {{ client.address || 'Sin dirección' }}
+              </div>
+            </td>
+            <td class="px-6 py-4">
+              <div class="flex flex-col gap-1">
+                <div class="text-sm flex items-center gap-1.5">
+                  <lucide-angular [img]="icons.Phone" class="w-3.5 h-3.5 text-slate-400"></lucide-angular>
+                  {{ client.phone }}
+                </div>
+                <div class="text-xs text-slate-500 flex items-center gap-1.5">
+                  <lucide-angular [img]="icons.Mail" class="w-3.5 h-3.5 text-slate-400"></lucide-angular>
+                  {{ client.email || 'Sin correo' }}
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4 font-mono text-sm">{{ client.rfc }}</td>
+            <td class="px-6 py-4 text-right">
+              <div class="flex items-center justify-end gap-2">
+                <button (click)="openModal(client)" class="p-2 hover:bg-slate-100 rounded-lg text-primary-600 transition-colors">
+                  <lucide-angular [img]="icons.Edit3" class="w-4 h-4"></lucide-angular>
+                </button>
+                <button (click)="deleteClient(client.id)" class="p-2 hover:bg-red-50 rounded-lg text-red-600 transition-colors">
+                  <lucide-angular [img]="icons.Trash2" class="w-4 h-4"></lucide-angular>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="clients.length === 0">
+            <td colspan="4" class="px-6 py-12 text-center text-slate-400">No se encontraron clientes.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div *ngIf="showModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-secondary-900/40 backdrop-blur-sm" (click)="closeModal()"></div>
+    <div class="bg-white rounded-2xl shadow-2xl relative w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200">
+      <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <h3 class="text-xl font-bold">{{ editingId ? 'Editar Cliente' : 'Nuevo Cliente' }}</h3>
+        <button (click)="closeModal()" class="p-2 hover:bg-slate-200 rounded-lg">
+          <lucide-angular [img]="icons.X" class="w-5 h-5 text-slate-500"></lucide-angular>
+        </button>
+      </div>
+      
+      <form [formGroup]="clientForm" (ngSubmit)="onSubmit()" class="p-6 space-y-4">
+        <div>
+          <label class="block text-sm font-semibold mb-1">Nombre Completo *</label>
+          <input 
+            type="text" 
+            formControlName="name" 
+            class="input-modern" 
+            [class.border-red-500]="clientForm.get('name')?.invalid && clientForm.get('name')?.touched"
+            placeholder="Ej. Juan Pérez"
+          >
+          <p *ngIf="clientForm.get('name')?.invalid && clientForm.get('name')?.touched" class="text-xs text-red-500 mt-1">
+            El nombre es obligatorio.
+          </p>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold mb-1">Teléfono</label>
+            <input type="text" formControlName="phone" class="input-modern" placeholder="55 1234 5678">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-1">Email</label>
+            <input 
+              type="email" 
+              formControlName="email" 
+              class="input-modern" 
+              [class.border-red-500]="clientForm.get('email')?.invalid && clientForm.get('email')?.touched"
+              placeholder="juan@email.com"
+            >
+            <p *ngIf="clientForm.get('email')?.invalid && clientForm.get('email')?.touched" class="text-xs text-red-500 mt-1">
+              Ingrese un correo electrónico válido.
+            </p>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-1">Dirección</label>
+          <textarea formControlName="address" rows="2" class="input-modern" placeholder="Calle, Número, Colonia..."></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-1">RFC</label>
+          <input type="text" formControlName="rfc" class="input-modern" placeholder="ABCD123456... ">
+        </div>
+
+        <div class="flex gap-3 pt-4">
+          <button type="button" (click)="closeModal()" class="flex-1 px-4 py-2 border border-slate-200 rounded-xl font-medium hover:bg-slate-50 transition-colors">Cancelar</button>
+          <button type="submit" [disabled]="clientForm.invalid" class="flex-1 btn-primary disabled:opacity-50">
+            {{ editingId ? 'Guardar Cambios' : 'Registrar Cliente' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

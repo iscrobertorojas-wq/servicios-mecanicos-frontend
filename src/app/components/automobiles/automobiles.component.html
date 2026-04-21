@@ -1,0 +1,134 @@
+<div class="space-y-8">
+  <div class="flex items-center justify-between">
+    <div>
+      <h2 class="text-2xl font-bold text-slate-900">Automóviles</h2>
+      <p class="text-slate-500">Gestión de vehículos por cliente.</p>
+    </div>
+    <button (click)="openModal()" class="btn-primary flex items-center gap-2">
+      <lucide-angular [img]="icons.Plus" class="w-4 h-4"></lucide-angular>
+      Nuevo Vehículo
+    </button>
+  </div>
+
+  <!-- Search Area -->
+  <div class="card-premium p-4">
+    <div class="relative max-w-md">
+      <span class="absolute inset-y-0 left-3 flex items-center text-slate-400">
+        <lucide-angular [img]="icons.Search" class="w-4 h-4"></lucide-angular>
+      </span>
+      <input 
+        type="text" 
+        placeholder="Buscar por placas o marca..." 
+        (input)="onSearchChange($event)"
+        class="input-modern !pl-12"
+      >
+    </div>
+  </div>
+
+  <!-- Autos Table -->
+  <div class="card-premium overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse min-w-[750px]">
+        <thead class="bg-slate-50 border-b border-slate-100">
+          <tr>
+            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Vehículo</th>
+            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Placas</th>
+            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Cliente</th>
+            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Tipo</th>
+            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase text-right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <tr *ngFor="let auto of automobiles" class="hover:bg-slate-50/50 transition-colors">
+            <td class="px-6 py-4">
+              <div class="font-bold text-slate-900">{{ auto.brand }} {{ auto.submodel }}</div>
+              <div class="text-xs text-slate-400 mt-0.5">Modelo: {{ auto.model }}</div>
+            </td>
+            <td class="px-6 py-4">
+              <span class="bg-slate-100 text-slate-700 font-mono text-sm px-2 py-1 rounded-md border border-slate-200">
+                {{ auto.licensePlate }}
+              </span>
+            </td>
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-2">
+                <lucide-angular [img]="icons.User" class="w-3.5 h-3.5 text-slate-400"></lucide-angular>
+                <span class="text-sm font-medium">{{ auto.client.name }}</span>
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-600">{{ auto.type || '-' }}</td>
+            <td class="px-6 py-4 text-right">
+              <div class="flex items-center justify-end gap-2">
+                <button (click)="openModal(auto)" class="p-2 hover:bg-slate-100 rounded-lg text-primary-600 transition-colors">
+                  <lucide-angular [img]="icons.Edit3" class="w-4 h-4"></lucide-angular>
+                </button>
+                <button (click)="deleteAutomobile(auto.id)" class="p-2 hover:bg-red-50 rounded-lg text-red-600 transition-colors">
+                  <lucide-angular [img]="icons.Trash2" class="w-4 h-4"></lucide-angular>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="automobiles.length === 0">
+            <td colspan="5" class="px-6 py-12 text-center text-slate-400">No se encontraron vehículos.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div *ngIf="showModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-secondary-900/40 backdrop-blur-sm" (click)="closeModal()"></div>
+    <div class="bg-white rounded-2xl shadow-2xl relative w-full max-w-lg overflow-hidden">
+      <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <h3 class="text-xl font-bold">{{ editingId ? 'Editar Vehículo' : 'Nuevo Vehículo' }}</h3>
+        <button (click)="closeModal()" class="p-2 hover:bg-slate-200 rounded-lg">
+          <lucide-angular [img]="icons.X" class="w-5 h-5 text-slate-500"></lucide-angular>
+        </button>
+      </div>
+      
+      <form [formGroup]="autoForm" (ngSubmit)="onSubmit()" class="p-6 space-y-4">
+        <div>
+          <label class="block text-sm font-semibold mb-1">Cliente *</label>
+          <select formControlName="clientId" class="input-modern bg-white">
+            <option value="">Seleccione un cliente...</option>
+            <option *ngFor="let client of clients" [value]="client.id">{{ client.name }}</option>
+          </select>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold mb-1">Placas *</label>
+            <input type="text" formControlName="licensePlate" class="input-modern" placeholder="ABC-123">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-1">Tipo</label>
+            <input type="text" formControlName="type" class="input-modern" placeholder="Sedán, SUV, etc.">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold mb-1">Marca</label>
+            <input type="text" formControlName="brand" class="input-modern" placeholder="Ej. Ford">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-1">Submarca</label>
+            <input type="text" formControlName="submodel" class="input-modern" placeholder="Ej. Focus">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold mb-1">Modelo (Año)</label>
+          <input type="text" formControlName="model" class="input-modern" placeholder="2024">
+        </div>
+
+        <div class="flex gap-3 pt-4">
+          <button type="button" (click)="closeModal()" class="flex-1 px-4 py-2 border border-slate-200 rounded-xl font-medium hover:bg-slate-50">Cancelar</button>
+          <button type="submit" [disabled]="autoForm.invalid" class="flex-1 btn-primary disabled:opacity-50">
+            {{ editingId ? 'Guardar Cambios' : 'Registrar Vehículo' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

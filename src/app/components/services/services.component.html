@@ -1,0 +1,220 @@
+<div class="space-y-8">
+  <div class="flex items-center justify-between">
+    <div>
+      <h2 class="text-2xl font-bold text-slate-900">Servicios Mecánicos</h2>
+      <p class="text-slate-500">Registro histórico de servicios por vehículo.</p>
+    </div>
+    <button (click)="openModal()" class="btn-primary flex items-center gap-2">
+      <lucide-angular [img]="icons.Plus" class="w-4 h-4"></lucide-angular>
+      Nuevo Servicio
+    </button>
+  </div>
+
+  <!-- Filters Area -->
+  <div class="card-premium p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="font-bold flex items-center gap-2">
+        <lucide-angular [img]="icons.Filter" class="w-4 h-4"></lucide-angular>
+        Filtros de Búsqueda
+      </h3>
+      <button (click)="resetFilters()" class="text-sm text-primary-600 hover:underline">Limpiar Filtros</button>
+    </div>
+    <form [formGroup]="filterForm" (ngSubmit)="loadServices()" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div>
+        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Cliente</label>
+        <select formControlName="clientId" class="input-modern text-sm">
+          <option value="">Todos los clientes</option>
+          <option *ngFor="let c of clients" [value]="c.id">{{ c.name }}</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Fecha Inicio</label>
+        <input type="date" formControlName="startDate" class="input-modern text-sm">
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Fecha Fin</label>
+        <input type="date" formControlName="endDate" class="input-modern text-sm">
+      </div>
+      <div class="flex items-end">
+        <button type="submit" class="w-full btn-primary h-[38px] flex items-center justify-center gap-2">
+          <lucide-angular [img]="icons.Search" class="w-4 h-4"></lucide-angular>
+          Filtrar
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Services Table -->
+  <div class="card-premium overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse min-w-[1000px]">
+        <thead class="bg-slate-50 border-b border-slate-100">
+          <tr>
+            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Fecha</th>
+            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Vehículo / Cliente</th>
+            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Descripción</th>
+            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Km</th>
+            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Factura / Total</th>
+            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase text-right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <tr *ngFor="let s of services" class="hover:bg-slate-50/50 transition-colors">
+            <td class="px-6 py-4 text-sm font-medium">{{ s.serviceDate | date:'dd/MM/yyyy' }}</td>
+            <td class="px-6 py-4">
+              <div class="font-bold text-slate-900">{{ s.automobile.licensePlate }}</div>
+              <div class="text-xs text-slate-400">{{ s.client.name }}</div>
+            </td>
+            <td class="px-6 py-4 max-w-xs">
+              <p class="text-sm text-slate-600 truncate">{{ s.description }}</p>
+              <p class="text-xs text-slate-400 italic">Resp: {{ s.responsible }}</p>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-600">{{ s.mileage | number }}</td>
+            <td class="px-6 py-4">
+              <div class="text-sm font-bold text-primary-600">${{ s.invoiceTotal | number:'1.2-2' }}</div>
+              <div class="text-xs text-slate-400">Fact: {{ s.invoiceNumber || '-' }}</div>
+            </td>
+            <td class="px-6 py-4 text-right">
+              <div class="flex items-center justify-end gap-2">
+                <button (click)="openModal(s)" class="p-2 hover:bg-slate-100 rounded-lg text-primary-600 transition-colors">
+                  <lucide-angular [img]="icons.Edit3" class="w-4 h-4"></lucide-angular>
+                </button>
+                <button (click)="deleteService(s.id)" class="p-2 hover:bg-red-50 rounded-lg text-red-600 transition-colors">
+                  <lucide-angular [img]="icons.Trash2" class="w-4 h-4"></lucide-angular>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="services.length === 0">
+            <td colspan="6" class="px-6 py-12 text-center text-slate-400">No se encontraron servicios capturados.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div *ngIf="showModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-secondary-900/40 backdrop-blur-sm" (click)="closeModal()"></div>
+    <div class="bg-white rounded-2xl shadow-2xl relative w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div class="p-6 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white z-10">
+        <h3 class="text-xl font-bold">{{ editingId ? 'Editar Servicio' : 'Nuevo Registro de Servicio' }}</h3>
+        <button (click)="closeModal()" class="p-2 hover:bg-slate-200 rounded-lg">
+          <lucide-angular [img]="icons.X" class="w-5 h-5 text-slate-500"></lucide-angular>
+        </button>
+      </div>
+      
+      <form [formGroup]="serviceForm" (ngSubmit)="onSubmit()" class="p-6 space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold mb-1">Cliente *</label>
+            <select 
+              formControlName="clientId" 
+              (change)="onClientChange(serviceForm.get('clientId')?.value)" 
+              class="input-modern"
+              [class.border-red-500]="serviceForm.get('clientId')?.invalid && serviceForm.get('clientId')?.touched"
+            >
+              <option value="">Seleccione un cliente...</option>
+              <option *ngFor="let c of clients" [value]="c.id">{{ c.name }}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-1">Automóvil *</label>
+            <select 
+              formControlName="automobileId" 
+              class="input-modern" 
+              [class.border-red-500]="serviceForm.get('automobileId')?.invalid && serviceForm.get('automobileId')?.touched"
+            >
+              <option value="">{{ formAutomobiles.length === 0 ? 'Seleccione un cliente primero' : 'Seleccione vehículo...' }}</option>
+              <option *ngFor="let a of formAutomobiles" [value]="a.id">{{ a.licensePlate }} - {{ a.brand }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold mb-1">Fecha del Servicio *</label>
+            <input 
+              type="date" 
+              formControlName="serviceDate" 
+              class="input-modern"
+              [class.border-red-500]="serviceForm.get('serviceDate')?.invalid && serviceForm.get('serviceDate')?.touched"
+            >
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-1">Kilometraje *</label>
+            <input 
+              type="number" 
+              formControlName="mileage" 
+              class="input-modern" 
+              [class.border-red-500]="serviceForm.get('mileage')?.invalid && serviceForm.get('mileage')?.touched"
+              placeholder="0"
+            >
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold mb-1">Descripción del Servicio *</label>
+          <textarea 
+            formControlName="description" 
+            rows="3" 
+            class="input-modern" 
+            [class.border-red-500]="serviceForm.get('description')?.invalid && serviceForm.get('description')?.touched"
+            placeholder="Detalles del trabajo realizado..."
+          ></textarea>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold mb-1">Partes Reemplazadas *</label>
+          <textarea 
+            formControlName="replacedParts" 
+            rows="2" 
+            class="input-modern" 
+            [class.border-red-500]="serviceForm.get('replacedParts')?.invalid && serviceForm.get('replacedParts')?.touched"
+            placeholder="Lista de refacciones..."
+          ></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="md:col-span-1">
+            <label class="block text-sm font-semibold mb-1">Responsable *</label>
+            <input 
+              type="text" 
+              formControlName="responsible" 
+              class="input-modern" 
+              [class.border-red-500]="serviceForm.get('responsible')?.invalid && serviceForm.get('responsible')?.touched"
+              placeholder="Nombre mecánico"
+            >
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-1">No. De Factura *</label>
+            <input 
+              type="text" 
+              formControlName="invoiceNumber" 
+              class="input-modern" 
+              [class.border-red-500]="serviceForm.get('invoiceNumber')?.invalid && serviceForm.get('invoiceNumber')?.touched"
+              placeholder="FACT-001"
+            >
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-1">Total Factura ($) *</label>
+            <input 
+              type="number" 
+              formControlName="invoiceTotal" 
+              class="input-modern" 
+              [class.border-red-500]="serviceForm.get('invoiceTotal')?.invalid && serviceForm.get('invoiceTotal')?.touched"
+              placeholder="0.00"
+            >
+          </div>
+        </div>
+
+        <div class="flex gap-3 pt-4 sticky bottom-0 bg-white py-4 border-t border-slate-100">
+          <button type="button" (click)="closeModal()" class="flex-1 px-4 py-2 border border-slate-200 rounded-xl font-medium hover:bg-slate-50 transition-colors">Cancelar</button>
+          <button type="submit" [disabled]="serviceForm.invalid" class="flex-1 btn-primary disabled:opacity-50">
+            {{ editingId ? 'Actualizar Registro' : 'Registrar Servicio' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

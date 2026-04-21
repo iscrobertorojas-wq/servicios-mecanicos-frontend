@@ -1,0 +1,59 @@
+<div class="space-y-8">
+  <div>
+    <h2 class="text-2xl font-bold text-slate-900">Dashboard</h2>
+    <p class="text-slate-500">Resumen general de actividades y ventas.</p>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="card-premium p-6 flex items-center justify-between">
+      <div>
+        <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Ventas Semana</p>
+        <h3 class="text-3xl font-bold mt-1">${{ stats.weekTotal | number:'1.2-2' }}</h3>
+      </div>
+      <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center">
+        <lucide-angular [img]="icons.TrendingUp" class="w-6 h-6 text-emerald-600"></lucide-angular>
+      </div>
+    </div>
+
+    <div class="card-premium p-6 flex items-center justify-between">
+      <div>
+        <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Ventas Mes</p>
+        <h3 class="text-3xl font-bold mt-1">${{ stats.monthTotal | number:'1.2-2' }}</h3>
+      </div>
+      <div class="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center">
+        <lucide-angular [img]="icons.DollarSign" class="w-6 h-6 text-primary-600"></lucide-angular>
+      </div>
+    </div>
+
+    <div class="card-premium p-6 flex items-center justify-between">
+      <div>
+        <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Ventas Año</p>
+        <h3 class="text-3xl font-bold mt-1">${{ stats.yearTotal | number:'1.2-2' }}</h3>
+      </div>
+      <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center">
+        <lucide-angular [img]="icons.Calendar" class="w-6 h-6 text-amber-600"></lucide-angular>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Section -->
+  <div class="grid grid-cols-1 gap-6">
+    <div class="card-premium p-8">
+      <div class="flex items-center justify-between mb-8">
+        <h3 class="text-lg font-bold">Ventas Mensuales</h3>
+        <div class="flex items-center gap-2 text-sm text-slate-500">
+          <span class="w-3 h-3 bg-primary-500 rounded-full"></span>
+          <span>Año actual</span>
+        </div>
+      </div>
+      <div style="display: block; height: 350px;">
+        <canvas baseChart
+          [data]="barChartData"
+          [options]="barChartOptions"
+          [type]="barChartType">
+        </canvas>
+      </div>
+    </div>
+  </div>
+</div>

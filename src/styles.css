@@ -1,1 +1,31 @@
-/* You can add global styles to this file, and also import other style files */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+:root {
+  --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  background-color: #f8fafc;
+  color: #1e293b;
+}
+
+/* Custom UI enhancements for the "TailPanel" look */
+.sidebar-item-active {
+  @apply bg-primary-600 text-white shadow-lg shadow-primary-500/30;
+}
+
+.card-premium {
+  @apply bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow duration-300;
+}
+
+.btn-primary {
+  @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-xl transition-all active:scale-95;
+}
+
+.input-modern {
+  @apply block w-full rounded-xl border-slate-200 border bg-white px-4 py-2 text-slate-900 focus:border-primary-500 focus:ring-primary-500 sm:text-sm;
+}

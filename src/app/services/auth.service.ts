@@ -13,7 +13,14 @@ export class AuthService {
 
   constructor() {
     const hostname = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
-    this.apiUrl = `http://${hostname}:3000/api/auth`;
+    
+    if (hostname.includes('vercel.app')) {
+      // SI ESTAMOS EN VERCEL: Usar la URL de Railway con HTTPS
+      this.apiUrl = 'https://servicios-mecanicos-backend-production.up.railway.app/api/auth';
+    } else {
+      // DESARROLLO LOCAL / LAN
+      this.apiUrl = `http://${hostname}:3000/api/auth`;
+    }
   }
 
   login(credentials: { username: string, password: string }): Observable<any> {

@@ -33,7 +33,8 @@ export class SettingsComponent implements OnInit {
       email_body: [''],
       pdf_header: [''],
       pdf_logo_left: [''],
-      pdf_logo_right: ['']
+      pdf_logo_right: [''],
+      frontend_url: [typeof window !== 'undefined' ? window.location.origin : '']
     });
   }
 
@@ -99,7 +100,10 @@ export class SettingsComponent implements OnInit {
     }
 
     this.loading = true;
-    const values = this.settingsForm.value;
+    const values = {
+      ...this.settingsForm.value,
+      frontend_url: typeof window !== 'undefined' ? window.location.origin : ''
+    };
     console.log('Guardando configuración...', values);
     this.api.saveSettings(values).subscribe({
       next: () => {

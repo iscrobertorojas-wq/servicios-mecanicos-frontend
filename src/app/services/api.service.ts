@@ -10,12 +10,16 @@ export class ApiService {
   private apiUrl = ''; // Set dynamically in constructor
 
   constructor(private http: HttpClient) {
-    if (environment.apiUrl) {
-      // Si hay una URL definida (Producción), la usamos directamente
+    const hostname = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
+    
+    if (hostname.includes('vercel.app')) {
+      // SI ESTAMOS EN VERCEL: Forzamos la URL de producción con HTTPS
+      this.apiUrl = 'https://servicios-mecanicos-backend-production.up.railway.app/api';
+    } else if (environment.apiUrl) {
+      // Si el environment sí funcionó y tiene URL
       this.apiUrl = environment.apiUrl;
     } else {
-      // Si no hay URL definida (Desarrollo/LAN), detectamos el hostname dinámicamente
-      const hostname = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
+      // DESARROLLO LOCAL / LAN
       this.apiUrl = `http://${hostname}:3000/api`;
     }
   }

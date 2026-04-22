@@ -7,7 +7,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class ApiService {
-  private apiUrl = ''; // Set dynamically in constructor
+  public apiUrl = ''; // Set dynamically in constructor
 
   constructor(private http: HttpClient) {
     const hostname = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
@@ -99,5 +99,11 @@ export class ApiService {
 
   saveSettings(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/settings`, data);
+  }
+
+  getAuthGoogleUrl(): string {
+    // apiUrl is like "http://hostname:3000/api"
+    // we want "http://hostname:3000/api/auth/google"
+    return `${this.apiUrl}/auth/google`;
   }
 }

@@ -71,7 +71,7 @@ export class SettingsComponent implements OnInit {
     this.api.saveSettings(this.settingsForm.value).subscribe({
       next: () => {
         this.loading = false;
-        window.location.href = 'http://localhost:3000/api/auth/google';
+        window.location.href = this.api.getAuthGoogleUrl();
       },
       error: () => {
         this.loading = false;

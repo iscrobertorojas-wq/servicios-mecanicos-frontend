@@ -3,5 +3,5 @@
 // Ejemplo: https://servicios-mecanicos-backend.up.railway.app/api
 export const environment = {
   production: true,
-  apiUrl: 'https://TU-BACKEND-EN-RAILWAY.up.railway.app/api'
+  apiUrl: 'https://servicios-mecanicos-backend-production.up.railway.app/api'
 };

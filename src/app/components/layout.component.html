@@ -18,7 +18,7 @@
       <div class="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20">
         <lucide-angular [img]="icons.Wrench" class="w-6 h-6 text-white"></lucide-angular>
       </div>
-      <h1 *ngIf="sidebarOpen" class="font-bold text-xl tracking-tight overflow-hidden whitespace-nowrap">ServiceApp</h1>
+      <h1 *ngIf="sidebarOpen" class="font-bold text-lg tracking-tight overflow-hidden whitespace-nowrap">Servicios Mecánicos App</h1>
     </div>
 
     <nav class="flex-1 px-4 py-4 space-y-2">
@@ -39,7 +39,7 @@
         <lucide-angular [img]="icons.UserCircle" class="w-10 h-10 text-slate-400"></lucide-angular>
         <div *ngIf="sidebarOpen" class="overflow-hidden">
           <p class="text-sm font-semibold truncate">Admin User</p>
-          <p class="text-xs text-slate-500 truncate">paco&#64;autolavado.com</p>
+          <p class="text-xs text-slate-500 truncate">autolavado.paco98&#64;gmail.com</p>
         </div>
       </div>
       <button 
@@ -60,19 +60,10 @@
         <button (click)="toggleSidebar()" class="p-2 hover:bg-slate-50 rounded-lg text-slate-500">
           <lucide-angular [img]="sidebarOpen ? icons.X : icons.Menu" class="w-6 h-6"></lucide-angular>
         </button>
-        <div class="relative hidden md:block">
-          <span class="absolute inset-y-0 left-3 flex items-center text-slate-400">
-            <lucide-angular [img]="icons.Search" class="w-4 h-4"></lucide-angular>
-          </span>
-          <input type="text" placeholder="Buscar..." class="pl-10 pr-4 py-2 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary-500 w-64 transition-all">
-        </div>
+        </button>
       </div>
 
       <div class="flex items-center gap-4">
-        <button class="p-2 hover:bg-slate-50 rounded-lg text-slate-500 relative">
-          <lucide-angular [img]="icons.Bell" class="w-5 h-5"></lucide-angular>
-          <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-        </button>
         <div class="h-8 w-[1px] bg-slate-100 mx-2"></div>
         <div class="flex items-center gap-3">
           <div class="text-right hidden sm:block">

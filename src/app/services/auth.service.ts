@@ -11,15 +11,40 @@ export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
 
+  private timeoutId: any;
+  private readonly INACTIVITY_TIME = 3600000; // 1 hora en milisegundos
+
   constructor() {
     const hostname = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
     
     if (hostname.includes('vercel.app')) {
-      // SI ESTAMOS EN VERCEL: Usar la URL de Railway con HTTPS
       this.apiUrl = 'https://servicios-mecanicos-backend-production.up.railway.app/api/auth';
     } else {
-      // DESARROLLO LOCAL / LAN
       this.apiUrl = `http://${hostname}:3000/api/auth`;
+    }
+
+    if (typeof window !== 'undefined') {
+      this.initInactivityTimer();
+    }
+  }
+
+  private initInactivityTimer() {
+    // Escuchar eventos de actividad
+    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+    events.forEach(event => {
+      window.addEventListener(event, () => this.resetInactivityTimer());
+    });
+    this.resetInactivityTimer();
+  }
+
+  private resetInactivityTimer() {
+    if (this.timeoutId) clearTimeout(this.timeoutId);
+    
+    if (this.isLoggedIn()) {
+      this.timeoutId = setTimeout(() => {
+        console.log('Sesión cerrada por inactividad');
+        this.logout();
+      }, this.INACTIVITY_TIME);
     }
   }
 
@@ -27,19 +52,24 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/login`, credentials).pipe(
       tap((res: any) => {
         if (res.token) {
-          localStorage.setItem('auth_token', res.token);
+          sessionStorage.setItem('auth_token', res.token);
+          this.resetInactivityTimer();
         }
       })
     );
   }
 
   logout(): void {
-    localStorage.removeItem('auth_token');
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('auth_token');
+    }
+    if (this.timeoutId) clearTimeout(this.timeoutId);
     this.router.navigate(['/login']);
   }
 
   getToken(): string | null {
-    return localStorage.getItem('auth_token');
+    if (typeof window === 'undefined') return null;
+    return sessionStorage.getItem('auth_token');
   }
 
   isLoggedIn(): boolean {

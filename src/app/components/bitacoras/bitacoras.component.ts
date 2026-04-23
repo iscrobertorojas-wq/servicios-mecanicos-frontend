@@ -47,7 +47,7 @@ export class BitacorasComponent implements OnInit {
 
   onClientChange(clientId: any) {
     if (clientId) {
-      this.api.getAutomobiles(clientId).subscribe(res => {
+      this.api.getAutomobiles(clientId, undefined, true).subscribe(res => {
         this.autos = res;
         this.selectionForm.patchValue({ automobileId: '' });
         if (this.autos.length > 0) {

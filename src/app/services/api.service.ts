@@ -47,10 +47,11 @@ export class ApiService {
   }
 
   // Automobiles
-  getAutomobiles(clientId?: number, q?: string): Observable<any[]> {
+  getAutomobiles(clientId?: any, q?: string, hasServices: boolean = false): Observable<any[]> {
     let url = `${this.apiUrl}/automobiles?`;
     if (clientId) url += `clientId=${clientId}&`;
-    if (q) url += `q=${q}`;
+    if (q) url += `q=${q}&`;
+    if (hasServices) url += `hasServices=true`;
     return this.http.get<any[]>(url);
   }
 

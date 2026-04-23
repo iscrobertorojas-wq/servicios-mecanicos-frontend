@@ -61,7 +61,16 @@ export class DashboardComponent implements OnInit {
     this.api.getStats().subscribe({
       next: (res) => {
         this.stats = res;
-        this.barChartData.datasets[0].data = res.monthlyChart.map((d: any) => d.total);
+        // Creamos una nueva referencia del objeto para que la gráfica detecte el cambio
+        this.barChartData = {
+          ...this.barChartData,
+          datasets: [
+            { 
+              ...this.barChartData.datasets[0],
+              data: res.monthlyChart.map((d: any) => d.total)
+            }
+          ]
+        };
       },
       error: (err) => console.error(err)
     });

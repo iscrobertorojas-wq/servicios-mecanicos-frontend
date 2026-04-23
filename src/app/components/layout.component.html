@@ -26,6 +26,7 @@
         *ngFor="let item of navItems" 
         [routerLink]="item.route" 
         routerLinkActive="sidebar-item-active"
+        (click)="closeSidebarOnMobile()"
         class="flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 text-slate-400 hover:text-white hover:bg-secondary-800 group"
       >
         <lucide-angular [img]="item.icon" class="w-5 h-5 transition-transform group-hover:scale-110"></lucide-angular>

@@ -29,6 +29,7 @@ export class DashboardComponent implements OnInit {
 
   public barChartOptions: ChartConfiguration['options'] = {
     responsive: true,
+    maintainAspectRatio: false,
     scales: {
       x: {},
       y: { min: 0 }

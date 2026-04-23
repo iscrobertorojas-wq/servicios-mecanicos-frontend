@@ -59,6 +59,12 @@ export class LayoutComponent {
     this.sidebarOpen = !this.sidebarOpen;
   }
 
+  closeSidebarOnMobile() {
+    if (window.innerWidth < 1024) { // lg breakpoint
+      this.sidebarOpen = false;
+    }
+  }
+
   logout() {
     this.authService.logout();
   }

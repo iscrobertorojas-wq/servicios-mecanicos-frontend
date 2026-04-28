@@ -20,12 +20,44 @@
               <option *ngFor="let c of clients" [value]="c.id">{{ c.name }}</option>
             </select>
           </div>
-          <div>
-            <label class="block text-sm font-semibold mb-1">Automóvil</label>
-            <select formControlName="automobileId" (change)="onAutoChange(selectionForm.get('automobileId')?.value)" class="input-modern select-auto">
-              <option value="">{{ autos.length === 0 ? 'Sin vehículos' : 'Seleccione placas...' }}</option>
-              <option *ngFor="let a of autos" [value]="a.id">{{ a.licensePlate }} - {{ a.brand }}</option>
-            </select>
+          <div class="relative">
+            <label class="block text-sm font-semibold mb-1">Automóvil (Placas)</label>
+            <div class="relative">
+              <input 
+                type="text" 
+                [(ngModel)]="searchPlate" 
+                [ngModelOptions]="{standalone: true}"
+                (focus)="showAutoDropdown = true; onSearchInput()"
+                (input)="onSearchInput()"
+                placeholder="Escriba placas..." 
+                class="input-modern pl-10"
+                [disabled]="selectionForm.get('clientId')?.value === ''"
+              >
+              <lucide-angular [img]="icons.Search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></lucide-angular>
+              
+              <!-- Backdrop to close dropdown -->
+              <div *ngIf="showAutoDropdown" class="fixed inset-0 z-10" (click)="showAutoDropdown = false"></div>
+
+              <!-- Dropdown Panel -->
+              <div *ngIf="showAutoDropdown && filteredAutos.length > 0" class="absolute z-20 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl max-h-60 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-200">
+                <button 
+                  *ngFor="let a of filteredAutos" 
+                  (click)="selectAuto(a)"
+                  class="w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors flex items-center justify-between border-b border-slate-50 last:border-0"
+                >
+                  <div>
+                    <div class="font-bold text-slate-900">{{ a.licensePlate }}</div>
+                    <div class="text-xs text-slate-500">{{ a.brand }} {{ a.model }}</div>
+                  </div>
+                  <lucide-angular [img]="icons.CheckCircle" *ngIf="selectionForm.get('automobileId')?.value == a.id" class="w-4 h-4 text-primary-600"></lucide-angular>
+                </button>
+              </div>
+
+              <!-- No results -->
+              <div *ngIf="showAutoDropdown && filteredAutos.length === 0 && searchPlate.length >= 2" class="absolute z-20 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl p-4 text-center text-sm text-slate-400">
+                No se encontraron coincidencias
+              </div>
+            </div>
           </div>
         </form>
 

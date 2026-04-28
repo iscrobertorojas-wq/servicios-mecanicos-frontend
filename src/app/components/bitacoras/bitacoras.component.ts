@@ -20,6 +20,10 @@ export class BitacorasComponent implements OnInit {
   loading = false;
   pdfGenerated = false;
   
+  searchPlate = '';
+  showAutoDropdown = false;
+  filteredAutos: any[] = [];
+  
   settings: any = {};
   showPreviewModal = false;
   previewSubject = '';
@@ -49,6 +53,8 @@ export class BitacorasComponent implements OnInit {
     if (clientId) {
       this.api.getAutomobiles(clientId, undefined, true).subscribe(res => {
         this.autos = res;
+        this.filteredAutos = res; // Initial list
+        this.searchPlate = '';
         this.selectionForm.patchValue({ automobileId: '' });
         if (this.autos.length > 0) {
           this.selectionForm.get('automobileId')?.enable();
@@ -60,10 +66,32 @@ export class BitacorasComponent implements OnInit {
       });
     } else {
       this.autos = [];
+      this.filteredAutos = [];
       this.services = [];
       this.selectionForm.get('automobileId')?.disable();
       this.selectionForm.patchValue({ automobileId: '' });
     }
+  }
+
+  onSearchInput() {
+    this.showAutoDropdown = true;
+    const term = this.searchPlate.toLowerCase().trim();
+    
+    if (term.length >= 2) {
+      this.filteredAutos = this.autos.filter(a => 
+        a.licensePlate.toLowerCase().includes(term) || 
+        (a.brand && a.brand.toLowerCase().includes(term))
+      );
+    } else {
+      this.filteredAutos = this.autos;
+    }
+  }
+
+  selectAuto(auto: any) {
+    this.searchPlate = `${auto.licensePlate} - ${auto.brand || ''}`;
+    this.selectionForm.patchValue({ automobileId: auto.id });
+    this.showAutoDropdown = false;
+    this.onAutoChange(auto.id);
   }
 
   onAutoChange(autoId: any) {

@@ -80,7 +80,9 @@ export class BitacorasComponent implements OnInit {
     if (term.length >= 2) {
       this.filteredAutos = this.autos.filter(a => 
         a.licensePlate.toLowerCase().includes(term) || 
-        (a.brand && a.brand.toLowerCase().includes(term))
+        (a.brand && a.brand.toLowerCase().includes(term)) ||
+        (a.model && a.model.toLowerCase().includes(term)) ||
+        (a.submodel && a.submodel.toLowerCase().includes(term))
       );
     } else {
       this.filteredAutos = this.autos;

@@ -29,8 +29,8 @@
                 [ngModelOptions]="{standalone: true}"
                 (focus)="showAutoDropdown = true; onSearchInput()"
                 (input)="onSearchInput()"
-                placeholder="Escriba placas..." 
-                class="input-modern pl-10"
+                placeholder="Buscar por placas, marca o modelo..." 
+                class="input-modern pl-11"
                 [disabled]="selectionForm.get('clientId')?.value === ''"
               >
               <lucide-angular [img]="icons.Search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></lucide-angular>

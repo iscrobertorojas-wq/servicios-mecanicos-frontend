@@ -66,12 +66,14 @@ export class ServicesComponent implements OnInit {
     this.api.getClients().subscribe((res) => this.clients = res);
   }
 
-  onClientChange(clientId: any) {
+  onClientChange(clientId: any, clearSelection: boolean = true) {
     if (clientId) {
       this.api.getAutomobiles(clientId).subscribe((res) => {
         this.formAutomobiles = res;
         this.serviceForm.get('automobileId')?.enable();
-        this.serviceForm.patchValue({ automobileId: '' });
+        if (clearSelection) {
+          this.serviceForm.patchValue({ automobileId: '' });
+        }
       });
     } else {
       this.formAutomobiles = [];
@@ -90,9 +92,11 @@ export class ServicesComponent implements OnInit {
         serviceDate: formattedDate,
         deliveryDate: formattedDeliveryDate
       });
-      // Load autos for the specific client
-      this.onClientChange(service.clientId);
-      setTimeout(() => this.serviceForm.patchValue({ automobileId: service.automobileId }), 100);
+      // Load autos for the specific client without clearing the current value
+      this.onClientChange(service.clientId, false);
+      setTimeout(() => {
+        this.serviceForm.patchValue({ automobileId: service.automobileId });
+      }, 300);
     } else {
       this.editingId = null;
       this.serviceForm.reset({

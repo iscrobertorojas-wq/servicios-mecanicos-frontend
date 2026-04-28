@@ -50,9 +50,9 @@
       <table class="w-full text-left border-collapse min-w-[1000px]">
         <thead class="bg-slate-50 border-b border-slate-100 sticky top-0 z-10 shadow-sm">
           <tr>
-            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Fecha</th>
+            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Fechas</th>
             <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Vehículo / Cliente</th>
-            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Descripción</th>
+            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Trabajo Realizado</th>
             <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Km</th>
             <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Factura / Total</th>
             <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase text-right">Acciones</th>
@@ -60,14 +60,18 @@
         </thead>
         <tbody class="divide-y divide-slate-100">
           <tr *ngFor="let s of services" class="hover:bg-slate-50/50 transition-colors">
-            <td class="px-6 py-4 text-sm font-medium">{{ s.serviceDate | date:'dd/MM/yyyy' }}</td>
+            <td class="px-6 py-4">
+              <div class="text-sm font-medium">Reg: {{ s.serviceDate | date:'dd/MM/yyyy' }}</div>
+              <div class="text-xs text-slate-500 mt-1">Ent: {{ s.deliveryDate ? (s.deliveryDate | date:'dd/MM/yyyy') : '-' }}</div>
+            </td>
             <td class="px-6 py-4">
               <div class="font-bold text-slate-900">{{ s.automobile.licensePlate }}</div>
               <div class="text-xs text-slate-400">{{ s.client.name }}</div>
             </td>
             <td class="px-6 py-4 max-w-xs">
               <p class="text-sm text-slate-600 truncate">{{ s.description }}</p>
-              <p class="text-xs text-slate-400 italic">Resp: {{ s.responsible }}</p>
+              <p class="text-xs text-slate-500 truncate" *ngIf="s.observations"><span class="font-bold">Obs:</span> {{ s.observations }}</p>
+              <p class="text-xs text-slate-400 italic mt-1">Resp: {{ s.responsible }}</p>
             </td>
             <td class="px-6 py-4 text-sm text-slate-600">{{ s.mileage | number }}</td>
             <td class="px-6 py-4">
@@ -131,7 +135,7 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label class="block text-sm font-semibold mb-1">Fecha del Servicio *</label>
             <input 
@@ -139,6 +143,14 @@
               formControlName="serviceDate" 
               class="input-modern"
               [class.border-red-500]="serviceForm.get('serviceDate')?.invalid && serviceForm.get('serviceDate')?.touched"
+            >
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-1">Fecha de Entrega</label>
+            <input 
+              type="date" 
+              formControlName="deliveryDate" 
+              class="input-modern"
             >
           </div>
           <div>
@@ -161,6 +173,16 @@
             class="input-modern" 
             [class.border-red-500]="serviceForm.get('description')?.invalid && serviceForm.get('description')?.touched"
             placeholder="Detalles del trabajo realizado..."
+          ></textarea>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold mb-1">Observaciones o Pendientes (Opcional)</label>
+          <textarea 
+            formControlName="observations" 
+            rows="2" 
+            class="input-modern" 
+            placeholder="Comentarios adicionales o trabajos pendientes..."
           ></textarea>
         </div>
 

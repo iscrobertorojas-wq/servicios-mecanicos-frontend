@@ -35,7 +35,9 @@ export class ServicesComponent implements OnInit {
       clientId: ['', Validators.required],
       automobileId: ['', Validators.required],
       serviceDate: [new Date().toISOString().split('T')[0], Validators.required],
+      deliveryDate: [''],
       description: ['', Validators.required],
+      observations: [''],
       mileage: ['', Validators.required],
       replacedParts: ['', Validators.required],
       responsible: ['', Validators.required],
@@ -81,11 +83,12 @@ export class ServicesComponent implements OnInit {
     this.showModal = true;
     if (service) {
       this.editingId = service.id;
-      // Format date for input
       const formattedDate = new Date(service.serviceDate).toISOString().split('T')[0];
+      const formattedDeliveryDate = service.deliveryDate ? new Date(service.deliveryDate).toISOString().split('T')[0] : '';
       this.serviceForm.patchValue({
         ...service,
-        serviceDate: formattedDate
+        serviceDate: formattedDate,
+        deliveryDate: formattedDeliveryDate
       });
       // Load autos for the specific client
       this.onClientChange(service.clientId);

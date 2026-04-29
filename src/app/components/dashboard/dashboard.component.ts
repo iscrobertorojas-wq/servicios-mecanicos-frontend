@@ -17,8 +17,7 @@ export class DashboardComponent implements OnInit {
   stats: any = {
     weekTotal: 0,
     monthTotal: 0,
-    yearTotal: 0,
-    totalTotal: 0
+    yearTotal: 0
   };
 
   readonly icons = {

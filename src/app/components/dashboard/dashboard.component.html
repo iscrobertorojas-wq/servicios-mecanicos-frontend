@@ -5,11 +5,11 @@
   </div>
 
   <!-- Stats Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
     <div class="card-premium p-6 flex items-center justify-between">
       <div>
         <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Ventas Semana</p>
-        <h3 class="text-3xl font-bold mt-1">${{ stats.weekTotal | number:'1.2-2' }}</h3>
+        <h3 class="text-2xl font-bold mt-1">${{ stats.weekTotal | number:'1.2-2' }}</h3>
       </div>
       <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center">
         <lucide-angular [img]="icons.TrendingUp" class="w-6 h-6 text-emerald-600"></lucide-angular>
@@ -19,7 +19,7 @@
     <div class="card-premium p-6 flex items-center justify-between">
       <div>
         <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Ventas Mes</p>
-        <h3 class="text-3xl font-bold mt-1">${{ stats.monthTotal | number:'1.2-2' }}</h3>
+        <h3 class="text-2xl font-bold mt-1">${{ stats.monthTotal | number:'1.2-2' }}</h3>
       </div>
       <div class="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center">
         <lucide-angular [img]="icons.DollarSign" class="w-6 h-6 text-primary-600"></lucide-angular>
@@ -29,10 +29,20 @@
     <div class="card-premium p-6 flex items-center justify-between">
       <div>
         <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Ventas Año</p>
-        <h3 class="text-3xl font-bold mt-1">${{ stats.yearTotal | number:'1.2-2' }}</h3>
+        <h3 class="text-2xl font-bold mt-1">${{ stats.yearTotal | number:'1.2-2' }}</h3>
       </div>
       <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center">
         <lucide-angular [img]="icons.Calendar" class="w-6 h-6 text-amber-600"></lucide-angular>
+      </div>
+    </div>
+
+    <div class="card-premium p-6 flex items-center justify-between">
+      <div>
+        <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Ventas Totales</p>
+        <h3 class="text-2xl font-bold mt-1">${{ stats.totalTotal | number:'1.2-2' }}</h3>
+      </div>
+      <div class="w-12 h-12 bg-rose-50 rounded-xl flex items-center justify-center">
+        <lucide-angular [img]="icons.Package" class="w-6 h-6 text-rose-600"></lucide-angular>
       </div>
     </div>
   </div>

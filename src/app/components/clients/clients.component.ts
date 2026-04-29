@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { NotificationService } from '../../services/notification.service';
 import { LucideAngularModule, Plus, Search, Edit3, Trash2, Mail, Phone, MapPin, X } from 'lucide-angular';
@@ -28,10 +28,18 @@ export class ClientsComponent implements OnInit {
     this.clientForm = this.fb.group({
       name: ['', Validators.required],
       phone: [''],
-      email: ['', [Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
+      email: ['', [this.multipleEmailsValidator]],
       address: [''],
       rfc: [''],
     });
+  }
+
+  multipleEmailsValidator(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) return null;
+    const emails = control.value.split(';').map((e: string) => e.trim()).filter((e: string) => e);
+    const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/i;
+    const invalid = emails.some((e: string) => !emailPattern.test(e));
+    return invalid ? { multipleEmails: true } : null;
   }
 
   ngOnInit(): void {

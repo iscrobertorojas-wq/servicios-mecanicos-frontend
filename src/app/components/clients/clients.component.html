@@ -109,16 +109,17 @@
             <input type="text" formControlName="phone" class="input-modern" placeholder="55 1234 5678">
           </div>
           <div>
-            <label class="block text-sm font-semibold mb-1">Email</label>
+            <label class="block text-sm font-semibold mb-1">Email(s)</label>
             <input 
-              type="email" 
+              type="text" 
               formControlName="email" 
               class="input-modern" 
               [class.border-red-500]="clientForm.get('email')?.invalid && clientForm.get('email')?.touched"
-              placeholder="juan@email.com"
+              placeholder="ejemplo@correo.com; otro@correo.com"
             >
+            <p class="text-[10px] text-slate-400 mt-1">Puedes añadir varios separados por punto y coma (;)</p>
             <p *ngIf="clientForm.get('email')?.invalid && clientForm.get('email')?.touched" class="text-xs text-red-500 mt-1">
-              Ingrese un correo electrónico válido.
+              Uno o más correos electrónicos tienen un formato inválido.
             </p>
           </div>
         </div>

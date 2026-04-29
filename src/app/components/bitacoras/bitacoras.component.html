@@ -113,7 +113,7 @@
               </thead>
               <tbody class="divide-y divide-slate-100">
                 <tr *ngFor="let s of services" class="hover:bg-slate-50 transition-colors">
-                  <td class="px-6 py-4 text-xs font-semibold">{{ s.serviceDate | date:'dd/MM/yyyy' }}</td>
+                  <td class="px-6 py-4 text-xs font-semibold">{{ s.serviceDate | date:'dd/MM/yyyy':'UTC' }}</td>
                   <td class="px-6 py-4 text-xs text-slate-600 max-w-[200px] truncate">{{ s.description }}</td>
                   <td class="px-6 py-4 text-xs text-slate-500 font-mono">{{ s.mileage | number }}</td>
                   <td class="px-6 py-4 text-xs font-bold text-right text-slate-900">${{ s.invoiceTotal | number:'1.2-2' }}</td>

@@ -1,201 +1,245 @@
-<div class="max-w-4xl space-y-8">
-  <div>
-    <h2 class="text-2xl font-bold text-slate-900">Configuración</h2>
-    <p class="text-slate-500">Ajustes globales del sistema y servidor de correo.</p>
+<div class="max-w-4xl mx-auto space-y-8 pb-24">
+  <!-- Header Section -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <h2 class="text-3xl font-black text-slate-900 tracking-tight">Configuración del Sistema</h2>
+      <p class="text-slate-500">Administra los parámetros globales, servidor de correo y respaldos.</p>
+    </div>
+    <div class="hidden md:block">
+      <button (click)="onSubmit()" [disabled]="settingsForm.invalid || loading" class="btn-primary flex items-center gap-2 py-3 px-8 shadow-lg shadow-primary-500/20">
+        <lucide-angular [img]="icons.Save" class="w-4 h-4" *ngIf="!loading"></lucide-angular>
+        <span *ngIf="loading" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+        {{ loading ? 'Guardando...' : 'Guardar Todo' }}
+      </button>
+    </div>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-    <div class="md:col-span-1">
-      <h3 class="font-bold text-slate-900">Servidor SMTP</h3>
-      <p class="text-sm text-slate-500 mt-2">Configura los datos del servidor para el envío de bitácoras por correo electrónico. Puedes usar Gmail, Outlook o servidores personalizados.</p>
-      
-      <div class="mt-6 p-4 bg-primary-50 rounded-xl border border-primary-100">
-        <h4 class="text-xs font-bold text-primary-700 uppercase mb-2">Ayuda técnica</h4>
-        <ul class="text-xs text-primary-600 space-y-1">
-          <li>• Gmail: Recomendamos Autenticación OAuth2 abajo.</li>
-          <li>• Outlook: smtp.office365.com (Puerto 587)</li>
-          <li>• Usa contraseñas de aplicación si no quieres usar OAuth2.</li>
-        </ul>
+  <form [formGroup]="settingsForm" (ngSubmit)="onSubmit()" class="space-y-8">
+    
+    <!-- PANEL 1: CONFIGURACIÓN DE CORREO -->
+    <div class="card-premium p-0 overflow-hidden border-none shadow-xl shadow-slate-200/50">
+      <div class="bg-slate-50/80 p-6 border-b border-slate-100 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="p-2.5 bg-primary-100 text-primary-600 rounded-xl">
+            <lucide-angular [img]="icons.Mail" class="w-6 h-6"></lucide-angular>
+          </div>
+          <div>
+            <h4 class="font-bold text-slate-800 text-lg">Correo Electrónico (SMTP)</h4>
+            <p class="text-xs text-slate-500">Configura el envío automático de bitácoras.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-8 space-y-10">
+        <!-- SMTP Server Fields -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="md:col-span-1">
+            <h5 class="font-bold text-slate-800 text-sm mb-1">Servidor de Salida</h5>
+            <p class="text-xs text-slate-500">Datos de conexión proporcionados por tu proveedor de correo.</p>
+            
+            <div class="mt-4 p-4 bg-primary-50 rounded-xl border border-primary-100">
+              <h6 class="text-[10px] font-bold text-primary-700 uppercase mb-2">Sugerencias</h6>
+              <ul class="text-[10px] text-primary-600 space-y-1">
+                <li>• Gmail: Recomendamos OAuth2.</li>
+                <li>• Outlook: smtp.office365.com (587)</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="md:col-span-2 space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="item-label flex items-center gap-2 mb-2 font-semibold text-xs text-slate-700 uppercase tracking-wider">Host</label>
+                <input type="text" formControlName="smtp_host" class="input-modern" placeholder="smtp.gmail.com">
+              </div>
+              <div>
+                <label class="item-label flex items-center gap-2 mb-2 font-semibold text-xs text-slate-700 uppercase tracking-wider">Puerto</label>
+                <input type="number" formControlName="smtp_port" class="input-modern" placeholder="587">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="item-label flex items-center gap-2 mb-2 font-semibold text-xs text-slate-700 uppercase tracking-wider">Usuario / Correo</label>
+                <input type="email" formControlName="smtp_user" class="input-modern" placeholder="ejemplo@correo.com">
+              </div>
+              <div>
+                <label class="item-label flex items-center gap-2 mb-2 font-semibold text-xs text-slate-700 uppercase tracking-wider">Contraseña</label>
+                <input type="password" formControlName="smtp_pass" class="input-modern" placeholder="••••••••••••">
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 bg-slate-50 p-4 rounded-xl border border-slate-100">
+              <input type="checkbox" formControlName="smtp_secure" id="secure" class="w-4 h-4 text-primary-600 rounded">
+              <label for="secure" class="text-sm font-medium text-slate-700">Usar Conexión Segura (SSL/TLS)</label>
+            </div>
+          </div>
+        </div>
+
+        <hr class="border-slate-100">
+
+        <!-- Google OAuth Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="md:col-span-1">
+            <h5 class="font-bold text-slate-800 text-sm mb-1">Autenticación OAuth2</h5>
+            <p class="text-xs text-slate-500">Especial para cuentas de Gmail. Es más seguro que usar contraseñas tradicionales.</p>
+          </div>
+          <div class="md:col-span-2 space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="item-label flex items-center gap-2 mb-2 font-semibold text-xs text-slate-700 uppercase tracking-wider">Client ID</label>
+                <input type="text" formControlName="smtp_client_id" class="input-modern" placeholder="xxxxxxxxxxxx.apps.googleusercontent.com">
+              </div>
+              <div>
+                <label class="item-label flex items-center gap-2 mb-2 font-semibold text-xs text-slate-700 uppercase tracking-wider">Client Secret</label>
+                <input type="password" formControlName="smtp_client_secret" class="input-modern" placeholder="GOCSPX-xxxxxxxx">
+              </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+              <button type="button" (click)="connectWithGoogle()" class="flex items-center gap-2 px-6 py-2.5 border-2 border-blue-100 text-blue-600 font-bold rounded-xl hover:bg-blue-50 transition-colors">
+                <lucide-angular [img]="icons.Mail" class="w-4 h-4"></lucide-angular>
+                Vincular Cuenta de Google
+              </button>
+              <div *ngIf="settingsForm.get('smtp_refresh_token')?.value" class="flex items-center gap-2 text-emerald-600 text-xs font-bold bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100">
+                <lucide-angular [img]="icons.Check" class="w-4 h-4"></lucide-angular> Vinculada
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="border-slate-100">
+
+        <!-- Email Template Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="md:col-span-1">
+            <h5 class="font-bold text-slate-800 text-sm mb-1">Contenido Predeterminado</h5>
+            <p class="text-xs text-slate-500">Asunto y mensaje que se enviará a tus clientes al adjuntar bitácoras.</p>
+          </div>
+          <div class="md:col-span-2 space-y-6">
+            <div>
+              <label class="item-label flex items-center gap-2 mb-2 font-semibold text-xs text-slate-700 uppercase tracking-wider">Asunto Default</label>
+              <input type="text" formControlName="email_subject" class="input-modern" placeholder="Bitácora de Servicios - {{ '{{vehiculo}}' }}">
+              <p class="text-[10px] text-slate-400 mt-1">Variable: <span class="font-mono text-slate-600">{{ '{{vehiculo}}' }}</span></p>
+            </div>
+            <div>
+              <label class="item-label flex items-center gap-2 mb-2 font-semibold text-xs text-slate-700 uppercase tracking-wider">Mensaje / Cuerpo</label>
+              <textarea formControlName="email_body" rows="4" class="input-modern min-h-[100px] resize-y" placeholder="Hola {{ '{{cliente}}' }}, adjuntamos..."></textarea>
+              <p class="text-[10px] text-slate-400 mt-1">Variables: <span class="font-mono text-slate-600">{{ '{{cliente}}' }}</span> y <span class="font-mono text-slate-600">{{ '{{vehiculo}}' }}</span></p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="md:col-span-2 space-y-8">
-      <!-- SMTP Settings -->
-      <div class="card-premium p-8">
-        <form [formGroup]="settingsForm" (ngSubmit)="onSubmit()" class="space-y-6">
-          <div class="flex items-center gap-2 mb-4 border-b pb-2">
-            <lucide-angular [img]="icons.Mail" class="w-5 h-5 text-primary-600"></lucide-angular>
-            <h4 class="font-bold text-slate-800">Servidor SMTP</h4>
+    <!-- PANEL 2: FORMATO DE BITÁCORA -->
+    <div class="card-premium p-0 overflow-hidden border-none shadow-xl shadow-slate-200/50">
+      <div class="bg-slate-50/80 p-6 border-b border-slate-100 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="p-2.5 bg-amber-100 text-amber-600 rounded-xl">
+            <lucide-angular [img]="icons.Settings" class="w-6 h-6"></lucide-angular>
           </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label class="item-label flex items-center gap-2 mb-2 font-semibold text-sm">
-                <lucide-angular [img]="icons.Server" class="w-4 h-4 text-slate-400"></lucide-angular>
-                Servidor (Host)
-              </label>
-              <input type="text" formControlName="smtp_host" class="input-modern" placeholder="smtp.gmail.com">
-            </div>
-            <div>
-              <label class="item-label flex items-center gap-2 mb-2 font-semibold text-sm">
-                Puerto
-              </label>
-              <input type="number" formControlName="smtp_port" class="input-modern" placeholder="587">
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label class="item-label flex items-center gap-2 mb-2 font-semibold text-sm">
-                <lucide-angular [img]="icons.Mail" class="w-4 h-4 text-slate-400"></lucide-angular>
-                Usuario / Correo
-              </label>
-              <input type="email" formControlName="smtp_user" class="input-modern" placeholder="tu-correo@gmail.com">
-            </div>
-            <div>
-              <label class="item-label flex items-center gap-2 mb-2 font-semibold text-sm">
-                <lucide-angular [img]="icons.Lock" class="w-4 h-4 text-slate-400"></lucide-angular>
-                Contraseña
-              </label>
-              <input type="password" formControlName="smtp_pass" class="input-modern" placeholder="••••••••••••">
-            </div>
-          </div>
-
-          <div class="flex items-center gap-2 bg-slate-50 p-4 rounded-xl">
-             <input type="checkbox" formControlName="smtp_secure" id="secure" class="w-4 h-4 text-primary-600 rounded">
-             <label for="secure" class="text-sm font-medium text-slate-700">Usar Conexión Segura (SSL/TLS)</label>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 pt-6 border-t border-slate-100">
-            <div class="md:col-span-2">
-              <h5 class="text-sm font-bold text-slate-800 mb-1 flex items-center gap-2">
-                <lucide-angular [img]="icons.Key" class="w-4 h-4 text-blue-500"></lucide-angular>
-                Autenticación Segura Google (OAuth2)
-              </h5>
-              <p class="text-[11px] text-slate-500 mb-2">Para Gmail, configura Client ID y Secret, guárdalos aquí y luego conecta la cuenta. Al conectar no requerirás usuario/contraseña tradicional de SMTP.</p>
-            </div>
-            <div>
-              <label class="item-label flex items-center gap-2 mb-2 font-semibold text-sm text-slate-700">Client ID de Google</label>
-              <input type="text" formControlName="smtp_client_id" class="input-modern" placeholder="xxxxxxxxxxxx.apps.googleusercontent.com">
-            </div>
-            <div>
-              <label class="item-label flex items-center gap-2 mb-2 font-semibold text-sm text-slate-700">Client Secret de Google</label>
-              <input type="password" formControlName="smtp_client_secret" class="input-modern" placeholder="GOCSPX-xxxxxxxxxxxxxxxxxxxxxxxxxx">
-            </div>
-          </div>
-          
-          <div class="flex items-center gap-4">
-               <button type="button" (click)="connectWithGoogle()" class="flex items-center gap-2 px-4 py-2 border-2 border-blue-100 text-blue-600 font-bold rounded-xl hover:bg-blue-50 transition-colors">
-                  <lucide-angular [img]="icons.Mail" class="w-4 h-4"></lucide-angular>
-                  Conectar con Google
-               </button>
-               <div *ngIf="settingsForm.get('smtp_refresh_token')?.value" class="flex items-center gap-2 text-emerald-600 text-xs font-bold bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-100 shadow-sm">
-                  <lucide-angular [img]="icons.Check" class="w-4 h-4"></lucide-angular> Cuenta Vinculada
-               </div>
-          </div>
-
-          <!-- Email Template Configuration -->
-          <div class="flex items-center gap-2 mt-12 mb-4 border-b pb-2">
-            <lucide-angular [img]="icons.FileText" class="w-5 h-5 text-primary-600"></lucide-angular>
-            <h4 class="font-bold text-slate-800">Cuerpo y Mensaje del Correo</h4>
-          </div>
-          
-          <div class="space-y-6">
-            <div>
-              <label class="item-label flex items-center gap-2 mb-2 font-semibold text-sm text-slate-700">Asunto Default</label>
-              <input type="text" formControlName="email_subject" class="input-modern" placeholder="Bitácora de Servicios - {{ '{{vehiculo}}' }}">
-              <p class="text-[10px] text-slate-400 mt-1">Variable disponible: <span class="font-mono text-slate-600">{{ '{{vehiculo}}' }}</span> para insertar las placas activas.</p>
-            </div>
-            <div>
-              <label class="item-label flex items-center gap-2 mb-2 font-semibold text-sm text-slate-700">Mensaje/Cuerpo Default</label>
-              <textarea formControlName="email_body" rows="4" class="input-modern min-h-[100px] resize-y" placeholder="Hola {{ '{{cliente}}' }}, adjuntamos la bitácora..."></textarea>
-              <p class="text-[10px] text-slate-400 mt-1">Variables: <span class="font-mono text-slate-600">{{ '{{cliente}}' }}</span> y <span class="font-mono text-slate-600">{{ '{{vehiculo}}' }}</span>.</p>
-            </div>
-          </div>
-
-
-          <!-- Bitácora Configuration -->
-          <div class="flex items-center gap-2 mt-12 mb-4 border-b pb-2">
-            <lucide-angular [img]="icons.Settings" class="w-5 h-5 text-primary-600"></lucide-angular>
-            <h4 class="font-bold text-slate-800">Formato de Bitácora (PDF)</h4>
-          </div>
-
           <div>
-            <label class="item-label flex items-center gap-2 mb-2 font-semibold text-sm text-slate-700">
-              <lucide-angular [img]="icons.Type" class="w-4 h-4 text-primary-500"></lucide-angular>
-              Texto del Encabezado
-            </label>
+            <h4 class="font-bold text-slate-800 text-lg">Diseño de Bitácora (PDF)</h4>
+            <p class="text-xs text-slate-500">Personaliza la apariencia de tus reportes impresos.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-8 space-y-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="md:col-span-1">
+            <h5 class="font-bold text-slate-800 text-sm mb-1">Encabezado</h5>
+            <p class="text-xs text-slate-500">Nombre de la empresa, dirección y teléfonos que aparecerán al centro.</p>
+          </div>
+          <div class="md:col-span-2">
             <textarea 
               formControlName="pdf_header" 
               rows="5" 
               class="input-modern min-h-[120px] resize-y" 
-              placeholder="LLANTAS Y SERVICIOS DE JALPA&#10;LAVADO, LUBRICADO Y ENGRASADO...&#10;TEL. 476 543 99 23"
+              placeholder="NOMBRE DE LA EMPRESA&#10;DIRECCIÓN&#10;TELÉFONO"
             ></textarea>
-            <p class="text-[10px] text-slate-400 mt-1 italic">Este texto aparecerá centrado en la parte superior del PDF. Puedes usar múltiples líneas.</p>
           </div>
+        </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-            <div>
-              <label class="item-label flex items-center gap-2 mb-2 font-semibold text-sm text-slate-700">
-                <lucide-angular [img]="icons.FileImage" class="w-4 h-4 text-primary-500"></lucide-angular>
-                Logo Izquierdo
-              </label>
-              <div class="flex flex-col gap-3">
-                <div *ngIf="settingsForm.get('pdf_logo_left')?.value" class="w-20 h-20 border-2 border-slate-100 rounded-xl overflow-hidden bg-white flex items-center justify-center p-2 shadow-sm">
+        <hr class="border-slate-100">
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="md:col-span-1">
+            <h5 class="font-bold text-slate-800 text-sm mb-1">Logotipos</h5>
+            <p class="text-xs text-slate-500">Imágenes que aparecerán a los costados del encabezado.</p>
+          </div>
+          <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Logo Left -->
+            <div class="space-y-3">
+              <label class="font-semibold text-xs text-slate-700 uppercase tracking-wider block">Logo Izquierdo</label>
+              <div class="flex items-center gap-4">
+                <div *ngIf="settingsForm.get('pdf_logo_left')?.value" class="w-20 h-20 border border-slate-100 rounded-xl overflow-hidden bg-white flex items-center justify-center p-2 shadow-sm">
                   <img [src]="settingsForm.get('pdf_logo_left')?.value" class="max-w-full max-h-full object-contain">
                 </div>
-                <div class="max-w-full overflow-hidden">
-                  <input type="file" (change)="onFileSelected($event, 'pdf_logo_left')" class="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 transition-colors cursor-pointer">
-                </div>
+                <input type="file" (change)="onFileSelected($event, 'pdf_logo_left')" class="block w-full text-[10px] text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-bold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 transition-all cursor-pointer">
               </div>
             </div>
-            <div>
-              <label class="item-label flex items-center gap-2 mb-2 font-semibold text-sm text-slate-700">
-                <lucide-angular [img]="icons.FileImage" class="w-4 h-4 text-primary-500"></lucide-angular>
-                Logo Derecho
-              </label>
-              <div class="flex flex-col gap-3">
-                <div *ngIf="settingsForm.get('pdf_logo_right')?.value" class="w-20 h-20 border-2 border-slate-100 rounded-xl overflow-hidden bg-white flex items-center justify-center p-2 shadow-sm">
+            <!-- Logo Right -->
+            <div class="space-y-3">
+              <label class="font-semibold text-xs text-slate-700 uppercase tracking-wider block">Logo Derecho</label>
+              <div class="flex items-center gap-4">
+                <div *ngIf="settingsForm.get('pdf_logo_right')?.value" class="w-20 h-20 border border-slate-100 rounded-xl overflow-hidden bg-white flex items-center justify-center p-2 shadow-sm">
                   <img [src]="settingsForm.get('pdf_logo_right')?.value" class="max-w-full max-h-full object-contain">
                 </div>
-                <div class="max-w-full overflow-hidden">
-                  <input type="file" (change)="onFileSelected($event, 'pdf_logo_right')" class="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 transition-colors cursor-pointer">
-                </div>
+                <input type="file" (change)="onFileSelected($event, 'pdf_logo_right')" class="block w-full text-[10px] text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-bold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 transition-all cursor-pointer">
               </div>
             </div>
           </div>
-
-          <!-- Backup Configuration -->
-          <div class="flex items-center gap-2 mt-12 mb-4 border-b pb-2">
-            <lucide-angular [img]="icons.Database" class="w-5 h-5 text-primary-600"></lucide-angular>
-            <h4 class="font-bold text-slate-800">Respaldo de Base de Datos</h4>
-          </div>
-          
-          <div class="bg-blue-50 p-6 rounded-2xl border border-blue-100 flex flex-col md:flex-row items-center gap-6">
-            <div class="flex-1 text-center md:text-left">
-              <h5 class="font-bold text-blue-900 mb-1">Generar Script de Respaldo</h5>
-              <p class="text-xs text-blue-700">Descarga un archivo .sql con toda la información del sistema. Este archivo puede ser usado para restaurar la base de datos en otra instancia.</p>
-            </div>
-            <button type="button" (click)="generateBackup()" [disabled]="loading" class="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all shadow-md shadow-blue-500/20 active:scale-95 disabled:opacity-50">
-              <lucide-angular [img]="icons.Download" class="w-4 h-4" *ngIf="!loading"></lucide-angular>
-              <span *ngIf="loading" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-              {{ loading ? 'Generando...' : 'Descargar Respaldo' }}
-            </button>
-          </div>
-
-          <div class="flex items-center justify-end gap-4 pt-8 border-t border-slate-100">
-            <span *ngIf="saved" class="text-emerald-600 text-sm font-medium flex items-center gap-1 animate-in fade-in">
-              <lucide-angular [img]="icons.Check" class="w-4 h-4"></lucide-angular>
-              ¡Configuración guardada!
-            </span>
-            <button type="submit" [disabled]="settingsForm.invalid || loading" class="btn-primary flex items-center gap-2 py-3 px-8 shadow-lg shadow-primary-500/20">
-              <lucide-angular [img]="icons.Save" class="w-4 h-4" *ngIf="!loading"></lucide-angular>
-              <span *ngIf="loading" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-              {{ loading ? 'Guardando...' : 'Guardar Configuración' }}
-            </button>
-          </div>
-        </form>
+        </div>
       </div>
+    </div>
+
+    <!-- PANEL 3: BASE DE DATOS -->
+    <div class="card-premium p-0 overflow-hidden border-none shadow-xl shadow-slate-200/50">
+      <div class="bg-slate-50/80 p-6 border-b border-slate-100 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="p-2.5 bg-blue-100 text-blue-600 rounded-xl">
+            <lucide-angular [img]="icons.Database" class="w-6 h-6"></lucide-angular>
+          </div>
+          <div>
+            <h4 class="font-bold text-slate-800 text-lg">Mantenimiento y Respaldo</h4>
+            <p class="text-xs text-slate-500">Gestión de datos y copias de seguridad del sistema.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-8">
+        <div class="bg-blue-50/50 p-8 rounded-3xl border border-blue-100 flex flex-col md:flex-row items-center gap-8">
+          <div class="flex-1 text-center md:text-left">
+            <h5 class="font-extrabold text-blue-900 text-lg mb-2">Generar Script de Respaldo</h5>
+            <p class="text-sm text-blue-700 leading-relaxed">Descarga un archivo .sql con toda la información del sistema. Puedes usar este archivo para restaurar tu base de datos en caso de emergencia o migración.</p>
+          </div>
+          <button type="button" (click)="generateBackup()" [disabled]="loading" class="flex items-center gap-3 px-8 py-4 bg-blue-600 text-white font-black rounded-2xl hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/30 active:scale-95 disabled:opacity-50">
+            <lucide-angular [img]="icons.Download" class="w-5 h-5" *ngIf="!loading"></lucide-angular>
+            <span *ngIf="loading" class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+            {{ loading ? 'GENERANDO...' : 'DESCARGAR RESPALDO' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <!-- FIXED ACTION BAR AT BOTTOM -->
+  <div class="fixed bottom-0 left-0 right-0 p-4 bg-white/90 backdrop-blur-xl border-t border-slate-100 z-50 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.05)]">
+    <div class="max-w-4xl mx-auto flex items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <div *ngIf="saved" class="flex items-center gap-2 text-emerald-600 bg-emerald-50 px-4 py-2 rounded-xl border border-emerald-100 animate-in slide-in-from-bottom-2">
+          <lucide-angular [img]="icons.Check" class="w-4 h-4 font-bold"></lucide-angular>
+          <span class="text-xs font-bold uppercase tracking-widest">Configuración Guardada Exitosamente</span>
+        </div>
+      </div>
+      
+      <button (click)="onSubmit()" [disabled]="settingsForm.invalid || loading" class="btn-primary flex items-center justify-center gap-3 py-4 px-10 shadow-2xl shadow-primary-500/40 rounded-2xl group transition-all">
+        <lucide-angular [img]="icons.Save" class="w-5 h-5 group-hover:scale-110 transition-transform" *ngIf="!loading"></lucide-angular>
+        <span *ngIf="loading" class="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin"></span>
+        <span class="font-black text-sm tracking-widest uppercase">{{ loading ? 'Guardando...' : 'Guardar Cambios' }}</span>
+      </button>
     </div>
   </div>
 </div>

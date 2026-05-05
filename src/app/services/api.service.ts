@@ -107,4 +107,8 @@ export class ApiService {
     // we want "http://hostname:3000/api/auth/google"
     return `${this.apiUrl}/auth/google`;
   }
+
+  downloadBackup(): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/backup`, { responseType: 'blob' });
+  }
 }

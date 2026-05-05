@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../services/api.service';
-import { LucideAngularModule, Settings, Save, Mail, Lock, Server, Smartphone, Check, FileImage, Type, Key, FileText } from 'lucide-angular';
+import { LucideAngularModule, Settings, Save, Mail, Lock, Server, Smartphone, Check, FileImage, Type, Key, FileText, Database, Download } from 'lucide-angular';
 
 @Component({
   selector: 'app-settings',
@@ -16,7 +16,7 @@ export class SettingsComponent implements OnInit {
   loading = false;
   saved = false;
 
-  readonly icons = { Settings, Save, Mail, Lock, Server, Smartphone, Check, FileImage, Type, Key, FileText };
+  readonly icons = { Settings, Save, Mail, Lock, Server, Smartphone, Check, FileImage, Type, Key, FileText, Database, Download };
 
   constructor(private api: ApiService, private fb: FormBuilder, private route: ActivatedRoute) {
     this.settingsForm = this.fb.group({
@@ -114,6 +114,28 @@ export class SettingsComponent implements OnInit {
       error: (err) => {
         this.loading = false;
         alert('Error al guardar la configuración');
+      }
+    });
+  }
+
+  generateBackup() {
+    this.loading = true;
+    this.api.downloadBackup().subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `backup_servicios_${new Date().toISOString().split('T')[0]}.sql`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        this.loading = false;
+      },
+      error: (err) => {
+        this.loading = false;
+        alert('Error al generar el respaldo de la base de datos.');
+        console.error(err);
       }
     });
   }

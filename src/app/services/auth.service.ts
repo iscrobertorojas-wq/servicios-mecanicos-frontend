@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -16,9 +17,8 @@ export class AuthService {
 
   constructor() {
     const hostname = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
-    
-    if (hostname.includes('vercel.app')) {
-      this.apiUrl = 'https://servicios-mecanicos-backend-production.up.railway.app/api/auth';
+    if (environment.apiUrl) {
+      this.apiUrl = `${environment.apiUrl}/auth`;
     } else {
       this.apiUrl = `http://${hostname}:3000/api/auth`;
     }

@@ -12,11 +12,8 @@ export class ApiService {
   constructor(private http: HttpClient) {
     const hostname = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
     
-    if (hostname.includes('vercel.app')) {
-      // SI ESTAMOS EN VERCEL: Forzamos la URL de producción con HTTPS
-      this.apiUrl = 'https://servicios-mecanicos-backend-production.up.railway.app/api';
-    } else if (environment.apiUrl) {
-      // Si el environment sí funcionó y tiene URL
+    if (environment.apiUrl) {
+      // Usar URL configurada en environment (Vercel backend)
       this.apiUrl = environment.apiUrl;
     } else {
       // DESARROLLO LOCAL / LAN

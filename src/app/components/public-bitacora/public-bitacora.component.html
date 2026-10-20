@@ -1,0 +1,214 @@
+<div class="min-h-screen bg-slate-50 text-slate-800 flex flex-col font-sans">
+  <!-- Top Navigation / Header (Light Mode) -->
+  <header class="border-b border-slate-200 bg-white/90 backdrop-blur-md sticky top-0 z-30 shadow-xs">
+    <div class="max-w-4xl mx-auto px-4 py-3 sm:py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-slate-50 border border-slate-200 p-1 flex items-center justify-center overflow-hidden shrink-0 shadow-inner">
+          <img *ngIf="settings.pdf_logo_left" [src]="settings.pdf_logo_left" alt="Logo" class="max-w-full max-h-full object-contain">
+          <lucide-angular *ngIf="!settings.pdf_logo_left" [img]="icons.Wrench" class="w-6 h-6 text-primary-600"></lucide-angular>
+        </div>
+        <div>
+          <h1 class="text-sm sm:text-base font-bold text-slate-900 tracking-wide uppercase leading-tight">
+            {{ settings.pdf_header || 'LLANTAS Y SERVICIOS DE JALPA' }}
+          </h1>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-4xl w-full mx-auto px-4 py-6 sm:py-8 space-y-6">
+    <!-- Loading State -->
+    <div *ngIf="loading" class="space-y-4 animate-pulse">
+      <div class="h-36 bg-white rounded-3xl border border-slate-200"></div>
+      <div class="grid grid-cols-3 gap-3">
+        <div class="h-20 bg-white rounded-2xl border border-slate-200"></div>
+        <div class="h-20 bg-white rounded-2xl border border-slate-200"></div>
+        <div class="h-20 bg-white rounded-2xl border border-slate-200"></div>
+      </div>
+      <div class="h-44 bg-white rounded-3xl border border-slate-200"></div>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="!loading && error" class="bg-rose-50 border border-rose-200 p-6 rounded-3xl text-center space-y-3">
+      <div class="w-12 h-12 mx-auto rounded-full bg-rose-100 text-rose-600 flex items-center justify-center">
+        <lucide-angular [img]="icons.AlertCircle" class="w-6 h-6"></lucide-angular>
+      </div>
+      <h2 class="text-lg font-bold text-slate-900">Vehículo no encontrado</h2>
+      <p class="text-sm text-slate-600 max-w-md mx-auto">{{ error }}</p>
+    </div>
+
+    <!-- Vehicle Content -->
+    <div *ngIf="!loading && automobile" class="space-y-6">
+      <!-- Vehicle Hero Card -->
+      <div class="relative overflow-hidden rounded-3xl bg-white border border-slate-200 p-6 sm:p-8 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="space-y-2">
+            <!-- Plate Badge -->
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 shadow-xs">
+              <span class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">PLACA</span>
+              <span class="text-lg sm:text-2xl font-black text-amber-400 font-mono tracking-wider">
+                {{ automobile.licensePlate }}
+              </span>
+            </div>
+
+            <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900">
+              {{ automobile.brand }} {{ automobile.submodel }} {{ automobile.model }}
+            </h2>
+
+            <div class="flex flex-wrap items-center gap-2 text-xs text-slate-600">
+              <span *ngIf="automobile.type" class="bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md border border-slate-200 font-medium">
+                Tipo: {{ automobile.type }}
+              </span>
+              <span *ngIf="automobile.client?.name" class="text-slate-500 font-medium">
+                Cliente: <strong class="text-slate-800">{{ automobile.client.name }}</strong>
+              </span>
+            </div>
+          </div>
+
+          <div class="sm:text-right shrink-0">
+            <button 
+              (click)="downloadPdf()"
+              class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white font-semibold text-sm px-5 py-2.5 rounded-xl transition-all shadow-md shadow-primary-600/20"
+            >
+              <lucide-angular [img]="icons.Download" class="w-4 h-4"></lucide-angular>
+              Descargar Bitácora PDF
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Stats Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+        <!-- Total Services -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 flex items-center gap-3.5 shadow-xs">
+          <div class="w-11 h-11 rounded-xl bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center shrink-0">
+            <lucide-angular [img]="icons.Wrench" class="w-5 h-5"></lucide-angular>
+          </div>
+          <div>
+            <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Servicios Realizados</div>
+            <div class="text-xl font-bold text-slate-900">{{ services.length }}</div>
+          </div>
+        </div>
+
+        <!-- Latest Mileage -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 flex items-center gap-3.5 shadow-xs">
+          <div class="w-11 h-11 rounded-xl bg-amber-50 border border-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+            <lucide-angular [img]="icons.Gauge" class="w-5 h-5"></lucide-angular>
+          </div>
+          <div>
+            <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Último Kilometraje</div>
+            <div class="text-xl font-bold text-slate-900 font-mono">
+              {{ latestMileage ? (latestMileage | number) + ' km' : 'N/D' }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Last Service Date -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 flex items-center gap-3.5 shadow-xs">
+          <div class="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+            <lucide-angular [img]="icons.Calendar" class="w-5 h-5"></lucide-angular>
+          </div>
+          <div>
+            <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Último Servicio</div>
+            <div class="text-sm sm:text-base font-bold text-slate-900">
+              {{ lastServiceDate ? (lastServiceDate | date:'dd/MM/yyyy':'UTC') : 'Sin registros' }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Services History Section -->
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+            <lucide-angular [img]="icons.FileText" class="w-5 h-5 text-primary-600"></lucide-angular>
+            Historial de Mantenimientos
+          </h3>
+          <span class="text-xs text-slate-500 font-medium">
+            Ordenado cronológicamente
+          </span>
+        </div>
+
+        <!-- Services List -->
+        <div *ngIf="services.length > 0" class="space-y-3">
+          <div 
+            *ngFor="let s of services; let idx = index" 
+            class="bg-white border border-slate-200 hover:border-slate-300 rounded-2xl p-5 transition-all space-y-3 shadow-xs"
+          >
+            <!-- Card Header -->
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+              <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-primary-50 text-primary-700 border border-primary-200 font-mono text-xs flex items-center justify-center font-bold">
+                  {{ services.length - idx }}
+                </span>
+                <span class="text-sm font-bold text-slate-900">
+                  {{ s.serviceDate | date:'dd/MM/yyyy':'UTC' }}
+                </span>
+                <span *ngIf="s.deliveryDate" class="text-xs text-slate-500">
+                  (Entrega: {{ s.deliveryDate | date:'dd/MM/yyyy':'UTC' }})
+                </span>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <span *ngIf="s.mileage" class="px-2.5 py-1 rounded-md bg-slate-50 border border-slate-200 text-xs font-mono font-semibold text-slate-700">
+                  {{ s.mileage | number }} km
+                </span>
+                <span *ngIf="s.invoiceTotal" class="px-2.5 py-1 rounded-md bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-700">
+                  ${{ s.invoiceTotal | number:'1.2-2' }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Description -->
+            <div>
+              <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Descripción del Servicio</div>
+              <p class="text-sm text-slate-800 leading-relaxed font-medium">{{ s.description }}</p>
+            </div>
+
+            <!-- Details Grid: Replaced Parts, Observations, Responsible -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 text-xs">
+              <div *ngIf="s.replacedParts" class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                <span class="font-bold text-slate-500 block mb-1 uppercase tracking-wider text-[10px]">Refacciones / Piezas Reemplazadas:</span>
+                <p class="text-slate-700 whitespace-pre-line">{{ s.replacedParts }}</p>
+              </div>
+
+              <div *ngIf="s.observations" class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                <span class="font-bold text-slate-500 block mb-1 uppercase tracking-wider text-[10px]">Observaciones:</span>
+                <p class="text-slate-700 whitespace-pre-line">{{ s.observations }}</p>
+              </div>
+            </div>
+
+            <!-- Card Footer: Responsible & Invoice -->
+            <div class="flex flex-wrap items-center justify-between text-xs text-slate-500 pt-1 border-t border-slate-50">
+              <span *ngIf="s.responsible">
+                Mecánico responsable: <strong class="text-slate-700">{{ s.responsible }}</strong>
+              </span>
+              <span *ngIf="s.invoiceNumber" class="text-slate-400 font-mono">
+                Factura/Nota: #{{ s.invoiceNumber }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- No Services Empty State -->
+        <div *ngIf="services.length === 0" class="text-center py-12 bg-white rounded-3xl border border-slate-200 space-y-3 shadow-xs">
+          <div class="w-12 h-12 mx-auto rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+            <lucide-angular [img]="icons.FileText" class="w-6 h-6"></lucide-angular>
+          </div>
+          <p class="text-slate-500 font-medium">Aún no hay servicios registrados para este vehículo.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer (Light Mode) -->
+  <footer class="border-t border-slate-200 bg-white text-slate-500 text-xs py-6 mt-auto">
+    <div class="max-w-4xl mx-auto px-4 text-center space-y-2">
+      <p class="font-bold text-slate-800">{{ settings.pdf_header || 'LLANTAS Y SERVICIOS DE JALPA' }}</p>
+      <p class="text-slate-500">Jardín Francés #109, Jalpa de Cánovas, Purísima del Rincón, Gto.</p>
+      <p class="text-slate-500">Tel: 476 543 99 23 | 476 688 4739</p>
+      <p class="text-[11px] text-slate-400 pt-2">© Sistema de Gestión de Servicios Mecánicos</p>
+    </div>
+  </footer>
+</div>

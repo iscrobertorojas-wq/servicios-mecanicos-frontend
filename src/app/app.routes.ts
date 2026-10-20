@@ -4,6 +4,7 @@ import { ClientsComponent } from './components/clients/clients.component';
 import { AutomobilesComponent } from './components/automobiles/automobiles.component';
 import { ServicesComponent } from './components/services/services.component';
 import { BitacorasComponent } from './components/bitacoras/bitacoras.component';
+import { PublicBitacoraComponent } from './components/public-bitacora/public-bitacora.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { LayoutComponent } from './components/layout.component';
 import { LoginComponent } from './components/login/login.component';
@@ -11,6 +12,7 @@ import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
+  { path: 'bitacora-publica/:id', component: PublicBitacoraComponent },
   {
     path: '',
     component: LayoutComponent,

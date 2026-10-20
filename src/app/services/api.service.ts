@@ -90,6 +90,18 @@ export class ApiService {
     return this.http.post(`${this.apiUrl}/bitacora/generate`, { automobileId, sendEmail, additionalEmails });
   }
 
+  generateBitacoraLabel(automobileId: number, frontendUrl?: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/bitacora/label`, { automobileId, frontendUrl });
+  }
+
+  getPublicBitacora(id: string | number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/public/bitacora/${id}`);
+  }
+
+  getPublicBitacoraPdfUrl(id: string | number): string {
+    return `${this.apiUrl}/public/bitacora/${id}/pdf`;
+  }
+
   // Settings
   getSettings(): Observable<any> {
     return this.http.get(`${this.apiUrl}/settings`);
